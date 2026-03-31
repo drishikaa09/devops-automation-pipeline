@@ -1,0 +1,23 @@
+name: DevOps Pipeline
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  run-pipeline:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Make scripts executable
+        run: chmod +x smart.sh deploy.sh pipeline.sh
+
+      - name: Run pipeline
+        run: ./pipeline.sh
+        env:
+          PROJECT_NAME: "myproject"
+          REPO_URL: "https://github.com/gabrieldemarmiesse/python-on-whales"
