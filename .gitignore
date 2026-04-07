@@ -1,0 +1,15 @@
+# Cloned repos from pipeline runs
+python-on-whales/
+python-scripts/
+Python/
+bats-core/
+
+# Project directories created by smart.sh
+testproject*/
+test_project*/
+testing/
+tester/
+dockertest/
+
+# Logs
+logs/

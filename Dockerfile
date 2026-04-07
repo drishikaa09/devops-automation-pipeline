@@ -1,20 +1,23 @@
-# Use a simple Linux base
-FROM ubuntu:latest
+# Pin to a specific version — never use latest
+FROM ubuntu:22.04
 
-# Set working directory inside container
+# Avoid interactive prompts during apt installs
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Install only what's needed
+RUN apt-get update && apt-get install -y \
+    git \
+    python3 \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
 WORKDIR /app
 
-# Copy all your project files into container
-COPY . .
+# Copy only the scripts — not logs, testproject, etc.
+COPY smart.sh deploy.sh pipeline.sh ./
+COPY lib/ ./lib/
 
-# Install required tools
-RUN apt-get update && apt-get install -y \
-    bash \
-    git \
-    && apt-get clean
-
-# Give permission to your scripts
+# Make scripts executable
 RUN chmod +x smart.sh deploy.sh pipeline.sh
 
-# Run your pipeline when container starts
 CMD ["bash", "pipeline.sh"]
