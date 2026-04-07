@@ -6,18 +6,42 @@ on:
       - main
 
 jobs:
-  run-pipeline:
+  build-and-run:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Make scripts executable
-        run: chmod +x smart.sh deploy.sh pipeline.sh
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build Docker image
+        run: docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/devops-pipeline:latest .
+
+      - name: Push image to Docker Hub
+        run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/devops-pipeline:latest
 
       - name: Run pipeline
-        run: ./pipeline.sh
+        id: run_pipeline
         env:
-          PROJECT_NAME: "myproject"
-          REPO_URL: "https://github.com/gabrieldemarmiesse/python-on-whales"
+          PROJECT_NAME: ${{ secrets.PROJECT_NAME }}
+          REPO_URL: ${{ secrets.REPO_URL }}
+        run: |
+          docker run \
+            -e PROJECT_NAME=$PROJECT_NAME \
+            -e REPO_URL=$REPO_URL \
+            ${{ secrets.DOCKERHUB_USERNAME }}/devops-pipeline:latest
+
+      - name: Rollback on failure
+        if: failure()
+        run: |
+          echo "Pipeline failed — attempting rollback"
+          docker pull ${{ secrets.DOCKERHUB_USERNAME }}/devops-pipeline:previous || echo "No previous image found, skipping rollback"
+          docker run \
+            -e PROJECT_NAME=${{ secrets.PROJECT_NAME }} \
+            -e REPO_URL=${{ secrets.REPO_URL }} \
+            ${{ secrets.DOCKERHUB_USERNAME }}/devops-pipeline:previous || echo "Rollback also failed"
