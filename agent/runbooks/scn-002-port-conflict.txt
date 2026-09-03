@@ -1,0 +1,21 @@
+Incident: Service failed to start with an error like "Address already
+in use", "EADDRINUSE", or "bind: address already in use" during
+service startup or deployment.
+
+Cause: Another process — often a stale container from a previous
+failed deployment — is already holding the port the service needs.
+
+Resolution: Use resolve_port_conflict to identify the process holding
+the port, verify it is positively identifiable as a stale deployment
+of ours, and only then terminate it and restart the service. If
+ownership cannot be positively confirmed, do not terminate anything —
+this could kill an unrelated process on the runner.
+
+Verification: Confirm the stale owner was terminated, the port is
+free, the service binds successfully, its health check passes, and
+the originally failed stage is rerun and succeeds.
+
+Notes: If ownership validation fails at any point — even mid-retry —
+escalate immediately rather than waiting for the retry budget to run
+out. A retry should always revalidate ownership before acting, never
+assume the first check still holds.

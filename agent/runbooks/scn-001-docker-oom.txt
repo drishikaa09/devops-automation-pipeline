@@ -1,0 +1,21 @@
+Incident: Docker container exited with code 137 during CI build or
+execution stage. Container logs showed "OOMKilled: true", and kernel
+logs may show "Out of memory" / "Killed process". This indicates the
+container ran out of allocated memory, not a code-level crash.
+
+Cause: Memory exhaustion — container hit its configured memory limit.
+
+Resolution: Restart the container via restart_container action. Do not
+attempt to increase memory limits automatically — that is a resource-
+management decision requiring knowledge of host capacity and cost
+constraints, outside the scope of an automated fix.
+
+Verification: After restart, confirm the container is running, passes
+its health check, and the originally failed pipeline stage is rerun
+and succeeds — a running container that still fails the stage is a
+failed remediation, not a success.
+
+Notes: If OOM recurs for the same service within a short window, do
+not restart again — escalate. Repeated OOM likely means the service's
+memory limit is genuinely too low for its workload, which restart_container
+cannot fix.

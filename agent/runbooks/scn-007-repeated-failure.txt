@@ -1,0 +1,21 @@
+Incident: Either an individual incident has exhausted its own
+scenario's retry or rollback budget without a verified success, or the
+same underlying error signature has recurred across multiple separate
+incidents within a short time window — even if no single incident
+technically ran out of its own retry cap.
+
+Cause: A remediation is not actually holding. A fix that "succeeds"
+once but keeps recurring is not resolving the underlying problem.
+
+Resolution: No new fix is attempted — by definition this scenario only
+exists because scenario-specific remediation already failed or was
+exhausted. Compile the full attempt history (actions tried, order,
+verification results for each) into the escalation payload.
+
+Verification: Not applicable — no action is taken to verify.
+
+Notes: This is a circuit breaker, not a fix. Always escalates, with no
+further retry path by construction. If an associated runbook_id keeps
+getting selected and keeps failing to hold, flag that runbook for
+review — the runbook itself may be wrong or incomplete, not just that
+one incident was unlucky.

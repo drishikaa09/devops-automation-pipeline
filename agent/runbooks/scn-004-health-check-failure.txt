@@ -1,0 +1,23 @@
+Incident: Post-deployment health check returned a non-2xx response or
+timed out, or the readiness/liveness probe failed multiple consecutive
+times. The deployment tool reports a failed rollout.
+
+Cause: The newly deployed version is not healthy. This classification
+is a diagnosis only — it does not by itself authorize a rollback.
+
+Resolution: Use rollback_deployment, but only after deterministically
+resolving the "last known-good version" via deployment history (the
+last version with a recorded successful status and passing health
+check) — never inferred or selected by the LLM. Rollback is treated as
+a high-impact action regardless of how routine the trigger looks, and
+is only auto-approved on the first attempt for a given incident.
+
+Verification: Confirm the specific resolved target version is running
+(exact version/commit match, not just "a" healthy version), its health
+check passes, and the originally failed stage is rerun and succeeds.
+
+Notes: If the correct version is confirmed running but health checks
+still fail, this is a new problem, not a rollback failure — do not
+roll back again. If rollback itself fails to apply, escalate
+immediately without retrying. Never attempt a second rollback for the
+same incident.

@@ -1,0 +1,22 @@
+Incident: A pipeline failure did not match any known signature pattern
+for Docker OOM, port conflicts, dependency install failures, health
+check failures, or test failures.
+
+Cause: Unclassified. There is no basis to assume a cause, and
+guessing at one would be fabricating a diagnosis rather than
+performing one.
+
+Resolution: No remediation action is taken. This scenario has no
+execution step by design — auto-remediation is never permitted here,
+regardless of any confidence score, and the confidence/risk gate is
+bypassed entirely in favor of immediate escalation. There is no
+known-safe action in the Action Registry for an unclassified failure,
+so there is nothing for a policy check to approve.
+
+Verification: Not applicable — no action is taken to verify.
+
+Notes: The full raw log, exit code, and stage are still captured and
+escalated with structure, even though no fix is attempted. This is the
+input queue for identifying new failure patterns over time — once a
+recurring unclassified pattern emerges, it should be promoted into a
+new, properly scoped scenario, not handled by guessing here.

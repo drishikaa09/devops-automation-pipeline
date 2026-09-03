@@ -1,0 +1,25 @@
+Incident: A test runner exited non-zero during the CI test stage.
+
+Cause: Either a flaky test (timeout, connection refused, resource
+contention, or a "flaky" tag from the test runner) or a genuine
+assertion failure (business-logic mismatch, snapshot mismatch,
+explicit test expectation failure). This classification must happen
+before any action is taken.
+
+Resolution: If classified as a flaky signature, use rerun_test_stage
+to rerun only the failed stage — never modify test code, test data,
+or configuration, and never mark a test as skipped. If classified as
+a genuine assertion failure, do not rerun — escalate immediately, since
+retrying would only mask a real, reproducible failure. If the
+classification is ambiguous, treat it as an assertion failure and
+escalate — fail closed toward escalation, not toward retry.
+
+Verification: Confirm the rerun stage completes, the same test(s) that
+failed originally now pass, no new test failures were introduced, and
+the stage succeeds.
+
+Notes: Exactly one rerun ever, per incident, no exceptions. If the same
+test fails again on rerun, it is reclassified as reproducible
+regardless of its original flaky classification, and must not be
+rerun again. Never store "this test can be ignored" as a resolution —
+only store the flaky-signature pattern that justified the rerun.

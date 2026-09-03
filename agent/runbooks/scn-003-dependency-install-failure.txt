@@ -1,0 +1,22 @@
+Incident: A pip/npm/apt install step exited non-zero during the
+dependency install stage, before build or test. Logs may show
+"Could not find a version that satisfies the requirement", registry
+timeouts, or package-not-found errors.
+
+Cause: Either a transient issue (registry timeout, network blip,
+stale local cache) or a genuine resolvable/unresolvable dependency
+problem (version conflict, package doesn't exist).
+
+Resolution: First classify the failure sub-type. If transient, use
+retry_dependency_install to clear the local package cache and retry
+the install. If the failure is a real version conflict or a missing
+package, do not attempt an automatic fix — never modify requirements
+files or lockfiles automatically. Escalate instead.
+
+Verification: Confirm the install step completes successfully and the
+originally failed stage is rerun and succeeds.
+
+Notes: Only transient, retry-safe failures are ever auto-remediated.
+A failure requiring an actual dependency decision (bumping a version,
+resolving a conflict) always escalates immediately, skipping retry
+entirely.
