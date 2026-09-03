@@ -13,3 +13,7 @@ dockertest/
 
 # Logs
 logs/
+terraform/*.tfstate*
+terraform/terraform.tfvars
+__pycache__/
+*.pyc
