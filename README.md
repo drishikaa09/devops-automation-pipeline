@@ -1,29 +1,38 @@
-![DevOps Pipeline](https://github.com/drishikaa09/devops-automation-pipeline/actions/workflows/pipeline.yml/badge.svg)
-# devops-automation-pipeline
-A DevOps pipeline I built from scratch to automate project setup and deployment.
+# 🚀 DevOps Automation Pipeline
 
-## What it does
-Give it a project name and a GitHub repo URL — it clones the repo, runs the app if it finds one, and logs everything with timestamps.
+A modular, containerized DevOps pipeline that automates application setup, testing, and deployment with built-in failure handling and rollback mechanisms.
 
-## Tech used
-Bash, Docker, GitHub Actions
+---
 
-## Run it locally
+## ⚙️ Tech Stack
+Bash • Docker • GitHub Actions • Linux
+
+---
+
+## 🔧 What it does
+- Clones a GitHub repository dynamically  
+- Sets up the environment automatically  
+- Builds and runs the application inside a container  
+- Executes automated tests using Bats  
+- Implements fail-fast error handling and rollback on failure  
+- Logs all pipeline steps with structured timestamps  
+- Runs as a CI/CD workflow using GitHub Actions  
+
+---
+
+## 🏗️ Pipeline Flow
+Input → Clone → Setup → Build → Test → Deploy  
+↓  
+Logs + Error Handling + Rollback  
+
+---
+
+## ▶️ Run Locally
 ```bash
 bash pipeline.sh
 ```
-
-## Run in Docker
-```bash
+## 🐳 Run With Docker
+```
 docker build -t devops-pipeline .
 docker run -it devops-pipeline
-```
-
-## Project structure
-```
-├── smart.sh        # sets up the environment
-├── deploy.sh       # clones and runs code from GitHub  
-├── pipeline.sh     # runs the full pipeline
-├── Dockerfile      # containerises everything
-└── .github/workflows/pipeline.yml  # CI/CD
 ```
