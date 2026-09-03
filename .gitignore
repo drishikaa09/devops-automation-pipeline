@@ -17,3 +17,5 @@ terraform/*.tfstate*
 terraform/terraform.tfvars
 __pycache__/
 *.pyc
+agent/faiss_index.bin
+agent/faiss_metadata.pkl
